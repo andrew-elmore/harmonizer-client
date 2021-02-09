@@ -11,99 +11,64 @@ class Main extends React.Component {
         super(props);
 
         this.state = {
-            rawData: [],
-            // rawData: [
-            //     { ID: "303511", Supplier: "UNFI", name: "Jasmine Green Tea" },
-            //     { ID: "276931", Supplier: "UNFI", name: "Fair Trade Darjeeling Black Tea" },
-            //     { ID: "36946", Supplier: "UNFI", name: "Indian Spice Herbal Tea Blend" },
-            //     { ID: "36941", Supplier: "UNFI", name: "Kukicha Twig Black Tea" },
-            //     { ID: "36944", Supplier: "UNFI", name: "Bancha Leaf Tea" },
-            //     { ID: "361873", Supplier: "KEHE", name: "Happy House Blend™" },
-            //     { ID: "113673", Supplier: "KEHE", name: "Sweet Nothings Decaff™" },
-            //     { ID: "340927", Supplier: "KEHE", name: "Wonderbrew™" },
-            //     { ID: "68501", Supplier: "KEHE", name: "French Roast" },
-            //     { ID: "603193", Supplier: "KEHE", name: "French Roast" },
-            //     { ID: "266106", Supplier: "KEHE", name: "Jo-Jo's Java™" },
-            //     { ID: "22234", Supplier: "KEHE", name: "Error name" },
-            // ],
-            // mappedData: [],
-            mappedData: [
-                { distb: "UNFI", distbId: "303511", product: "Jasmine Green Tea" },
-                { distb: "UNFI", distbId: "276931", product: "Fair Trade Darjeeling Black Tea" },
-                { distb: "UNFI", distbId: "36946", product: "Indian Spice Herbal Tea Blend" },
-                { distb: "UNFI", distbId: "36941", product: "Kukicha Twig Black Tea" },
-                { distb: "UNFI", distbId: "36944", product: "Bancha Leaf Tea" },
-                { distb: "KEHE", distbId: "361873", product: "Happy House Blend™" },
-                { distb: "KEHE", distbId: "113673", product: "Sweet Nothings Decaff™" },
-                { distb: "KEHE", distbId: "340927", product: "Wonderbrew™" },
-                { distb: "KEHE", distbId: "68501", product: "French Roast" },
-                { distb: "KEHE", distbId: "603193", product: "French Roast" },
-                { distb: "KEHE", distbId: "266106", product: "Jo-Jo's Java™" },
+            rawData: [
+                { "ID": '475517', "Supplier": 'UNFI', "name": 'Mind, Body and Soul' },
+                { "ID": '303537', "Supplier": 'UNFI', "name": 'Mind, Body and Soul' },
+                { "ID": '457481', "Supplier": 'UNFI', "name": 'Earl Grey Black Tea' },
+                { "ID": '684514', "Supplier": 'UNFI', "name": 'Fair Trade English Breakfast Tea' },
+                { "ID": '736488', "Supplier": 'UNFI', "name": 'Gunpowder Green Tea (Special Pin Head)' },
+                { "ID": '272310', "Supplier": 'UNFI', "name": 'Biodynamic' },
+                { "ID": '987420', "Supplier": 'UNFI', "name": 'Breakfast Blend' },
+                { "ID": '992883', "Supplier": 'UNFI', "name": 'Colombian' },
+                { "ID": '1628429', "Supplier": 'KEHE', "name": 'White Rice Flour' },
+                { "ID": '64834', "Supplier": 'KEHE', "name": 'Cornstarch' },
+                { "ID": '340257', "Supplier": 'KEHE', "name": 'Whole Wheat Flour' },
+                { "ID": '113858', "Supplier": 'KEHE', "name": 'Guatemalan Atitlan' },
+                { "ID": '331150', "Supplier": 'KEHE', "name": 'Brown Rice Flour' },
+                { "ID": '104381', "Supplier": 'KEHE', "name": 'Vital Wheat Gluten' },
             ],
-            // unmatchedData: [],
-            unmatchedData: [{ distbId: "22234", distb: "KEHE", product: "Error name" }],
+            mappedData: [
+            ],
+            matchedData: [
+            ],
+            unmatchedData: [
+            ],
+            fileName: ''
         };
 
     
 
         this.url = 'http://localhost:5000'
-        this.name = ''
+        this.name = 'res'
         this.handleUpload = this.handleUpload.bind(this);
         this.submitMapping = this.submitMapping.bind(this);
         this.fetchMatches = this.fetchMatches.bind(this);
+        this.createCsv = this.createCsv.bind(this)
     }
 
-    // fetchNewMatches(data) {
-    //     const distbs = {}
-    //     data.forEach((row) => {
-    //         if (distbs[row["distb"]]) {
-    //             distbs[row["distb"]].push(row["distbId"])
-    //         } else {
-    //             distbs[row["distb"]] = [(row["distbId"])]
-    //         }
-    //     })
-    //     // console.log(distributors)
-    //     const formData = new FormData();
-    //     formData.append('distbs', JSON.stringify(distbs));
+    createCsv() {
+        const formData = new FormData();
+        formData.append('matchedData', JSON.stringify(this.state.matchedData));
 
-    //     fetch(`${this.url}/api/harmonize/match`, {
-    //         method: 'POST',
-    //         body: formData,
-    //     })
-    //         .then(response => response.json())
-    //         .then((matches) => {
-
-    //             data.forEach((row) => {
-    //                 if (matches[row.distb]) {
-    //                     if (matches[row.distb][row.distbId]) {
-    //                         mappedData.push({ ...row, ['tlId']: matches[row.distb][row.distbId] })
-    //                     } else {
-    //                         unmatchedData.push(row)
-    //                     }
-    //                 }
-    //             });
-
-    //             console.log(mappedData)
-    //             this.setState({
-    //                 ["mappedData"]: mappedData,
-    //                 ["unmatchedData"]: unmatchedData
-    //             })
-
-    //         });
-    // }
+        fetch(`${this.url}/api/harmonize/download`, {
+            method: 'POST',
+            body: formData,
+        })
+        .then((response) => {
+            this.downloadFile(response)
+        });
+    }
 
 
-
-    fetchMatches(data) {
+    fetchMatches(sourceData) {
         const distbs = {}
-        data.forEach((row) => {
+        sourceData.forEach((row) => {
             if (distbs[row["distb"]]) {
                 distbs[row["distb"]].push(row["distbId"])
             } else {
                 distbs[row["distb"]] = [(row["distbId"])]
             }
         })
-        // console.log(distributors)
         const formData = new FormData();
         formData.append('distbs', JSON.stringify(distbs));
 
@@ -111,30 +76,41 @@ class Main extends React.Component {
             method: 'POST',
             body: formData,
         })
-            .then(response => response.json())
-            .then((matches) => {
-                const mappedData = this.state.mappedData
-                let unmatchedData = this.state.unmatchedData
-                data.forEach((row) => {
-                    if(matches[row.distb]){
-                        if (matches[row.distb][row.distbId] ){
-                            mappedData.push({...row, ['tlId']: matches[row.distb][row.distbId]})
-                            if (unmatchedData.filter((item) => {return(row.product === item.product)})){
-                                unmatchedData = unmatchedData.filter((item) => { return (row.product != item.product) })
-                            }
-                        } else {
-                            unmatchedData.push(row)
-                        }
-                    }
-                });
-                
-                console.log(mappedData)
-                this.setState({
-                    ["mappedData"]: mappedData,
-                    ["unmatchedData"]: unmatchedData
-                })
+        .then(response => response.json())
+        .then((matches) => {
+            
+            const matchedData = this.state.matchedData
+            let unmatchedData = this.state.unmatchedData
 
+            sourceData.forEach((row) => {
+                try{
+                    let matchedItems = []
+                    Object.entries(matches[row.distb]).forEach(([dbDistbId, dbItem])=>{
+                        if (dbDistbId.includes(row.distbId)){
+                            matchedItems.push(dbItem)
+                        }
+                    })
+                    console.log(matchedItems.length)
+                    let matchedItem = null
+                    if (matchedItems.length === 1) {
+                        matchedItem = matchedItems[0]
+                    } else {
+                        throw 'problem';
+                    }
+                    matchedData.push({ ...row, ["tlId"]: matchedItem.tlId, ["dbProductName"]: matchedItem.dbProductName })
+                    unmatchedData = unmatchedData.filter((item) => {return item.product != row.product})
+                } catch {
+                    unmatchedData.push(row)
+                }
             });
+
+            this.setState({
+                ["matchedData"]: matchedData,
+                ["unmatchedData"]: unmatchedData,
+                ['mappedData']: []
+            })
+
+        });
     }
 
     submitMapping(distbName, distbIdName, productName) {
@@ -171,33 +147,28 @@ class Main extends React.Component {
         });
     }
 
-    // downloadFile = async (res) => {
-    //     const blob = await res.blob();
-    //     download(blob, this.name);
-    // }
+    downloadFile = async (res) => {
+        const blob = await res.blob();
+        download(blob, this.name);
+    }
 
     render() {
         return (
             <div>
+                <button onClick={() => { console.log(this.state) }}>See State</button>
                 <form onSubmit={this.handleUpload}>
                     <div>
                         <input ref={(ref) => { this.uploadInput = ref; }} type="file" />
                     </div>
-                    <br />
                     <div>
-                        <button>Convert</button>
+                        <button>Search</button>
                     </div>
                 </form>
-                <button onClick={ () => {console.log(this.state)} }>See State</button>
-                {/* <button onClick={ () => {this.fetchMatches()} }>See Tables</button> */}
                 <Mapping
                     rawData={this.state.rawData}
                     submitMapping={(distbName, distbIdName, productName) => { this.submitMapping(distbName, distbIdName, productName)}}
                 />
                 <br/>
-                <br/>
-
-
                 {this.state.unmatchedData.map((unmatchedItem) => {
                     return (
                         <Unmatched
@@ -211,12 +182,11 @@ class Main extends React.Component {
                 <br />
                 <br />
                 <Matched
-                    mappedData={this.state.mappedData}
+                    matchedData={this.state.matchedData}
                 />
-
                 <button 
                     onClick={() => {
-
+                        this.createCsv()
                     }}
                 >Approve</button>
             </div>
