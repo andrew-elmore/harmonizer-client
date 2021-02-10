@@ -6,7 +6,7 @@ import Mapping from './mapping/mapping'
 import Matched from './matching/matched'
 import Unmatched from './matching/unmatched'
 import Approval from './approval/approval'
-import {uploadStyle} from './styles'
+import {uploadStyle, unmatchedStyle} from './styles'
 
 class Main extends React.Component {
     constructor(props) {
@@ -32,22 +32,22 @@ class Main extends React.Component {
             mappedData: [
             ],
             matchedData: [
-                { tlId: "10025", distb: "UNFI", distbId: "475517", product: "Mind, Body and Soul", dbProductName: "Mind, Body and Soul"},
-                { tlId: "10025", distb: "UNFI", distbId: "303537", product: "Mind, Body and Soul", dbProductName: "Mind, Body and Soul"},
-                { tlId: "10087", distb: "UNFI", distbId: "457481", product: "Earl Grey Black Tea", dbProductName: "Earl Grey Black Tea"},
-                { tlId: "10088", distb: "UNFI", distbId: "684514", product: "Fair Trade English Breakfast Tea", dbProductName: "Fair Trade English Breakfast Tea"},
-                { tlId: "10134", distb: "UNFI", distbId: "736488", product: "Gunpowder Green Tea (Special Pin Head)", dbProductName: "Gunpowder Green Tea (Special Pin Head)"},
-                { tlId: "10174", distb: "UNFI", distbId: "272310", product: "Biodynamic", dbProductName: "Biodynamic"},
-                { tlId: "10176", distb: "UNFI", distbId: "987420", product: "Breakfast Blend", dbProductName: "Breakfast Blend"},
-                { tlId: "10177", distb: "UNFI", distbId: "992883", product: "Colombian", dbProductName: "Colombian"},
-                { tlId: "12685", distb: "KEHE", distbId: "1628429", product: "White Rice Flour", dbProductName: "White Rice Flour"},
-                { tlId: "11647", distb: "KEHE", distbId: "64834", product: "Cornstarch", dbProductName: "Cornstarch"},
-                { tlId: "12267", distb: "KEHE", distbId: "340257", product: "Whole Wheat Flour", dbProductName: "Whole Wheat Flour"},
-                { tlId: "10680", distb: "KEHE", distbId: "113858", product: "Guatemalan Atitlan", dbProductName: "Guatemalan Atitlan"},
-                { tlId: "12682", distb: "KEHE", distbId: "331150", product: "Brown Rice Flour", dbProductName: "Brown Rice Flour"},
+                { tlId: "10025", distb: "UNFI", distbId: "475517", product: "Mind, Body and Soul", dbProductName: "Mind, Body and Soul", approved: true},
+                { tlId: "10025", distb: "UNFI", distbId: "303537", product: "Mind, Body and Soul", dbProductName: "Mind, Body and Soul", approved: true},
+                { tlId: "10087", distb: "UNFI", distbId: "457481", product: "Earl Grey Black Tea", dbProductName: "Earl Grey Black Tea", approved: true},
+                { tlId: "10088", distb: "UNFI", distbId: "684514", product: "Fair Trade English Breakfast Tea", dbProductName: "Fair Trade English Breakfast Tea", approved: true},
+                { tlId: "10134", distb: "UNFI", distbId: "736488", product: "Gunpowder Green Tea (Special Pin Head)", dbProductName: "Gunpowder Green Tea (Special Pin Head)", approved: true},
+                { tlId: "10174", distb: "UNFI", distbId: "272310", product: "Biodynamic", dbProductName: "Biodynamic", approved: true},
+                { tlId: "10176", distb: "UNFI", distbId: "987420", product: "Breakfast Blend", dbProductName: "Breakfast Blend", approved: true},
+                { tlId: "10177", distb: "UNFI", distbId: "992883", product: "Colombian", dbProductName: "Colombian", approved: true},
+                { tlId: "12685", distb: "KEHE", distbId: "1628429", product: "White Rice Flour", dbProductName: "White Rice Flour", approved: true},
+                { tlId: "11647", distb: "KEHE", distbId: "64834", product: "Cornstarch", dbProductName: "Cornstarch", approved: true},
+                { tlId: "12267", distb: "KEHE", distbId: "340257", product: "Whole Wheat Flour", dbProductName: "Whole Wheat Flour", approved: true},
+                { tlId: "10680", distb: "KEHE", distbId: "113858", product: "Guatemalan Atitlan", dbProductName: "Guatemalan Atitlan", approved: true},
+                { tlId: "12682", distb: "KEHE", distbId: "331150", product: "Brown Rice Flour", dbProductName: "Brown Rice Flour", approved: true},
             ],
             unmatchedData: [
-                { distb: "KEHE", distbId: "104381", product: "Vital Wheat Gluten"}
+                // { distb: "KEHE", distbId: "10438", product: "Vital Wheat Gluten"}
 
             ],
             fileName: ''
@@ -220,23 +220,19 @@ class Main extends React.Component {
                     rawData={this.state.rawData}
                     submitMapping={(distbName, distbIdName, productName) => { this.submitMapping(distbName, distbIdName, productName)}}
                 />
-                {this.state.unmatchedData.map((unmatchedItem) => {
-                    return (
-                        <Unmatched
-                            unmatchedItem={unmatchedItem}
-                            fetchMatches={(item) => {this.fetchMatches(item)}}
-                        />
-                    )
-                })}
-                <Approval
-                    createCsv={(fileName) => { this.createCsv(fileName) }}
-                    incompleteData={(this.state.unmatchedData.length + this.state.mappedData.length + this.state.rawData.length)}
-                    completeData={this.state.matchedData.length}
+                <Unmatched
+                    unmatchedData={this.state.unmatchedData}
+                    fetchMatches={(item) => {this.fetchMatches(item)}}
                 />
                 <Matched
                     matchedData={this.state.matchedData}
                     approve={(idx) => { this.approve(idx)}}
                     reject={(idx) => { this.reject(idx)}}
+                />
+                <Approval
+                    createCsv={(fileName) => { this.createCsv(fileName) }}
+                    incompleteData={(this.state.unmatchedData.length + this.state.mappedData.length + this.state.rawData.length + this.state.matchedData.filter((row) => { return (!row.approved) }).length)}
+                    completeData={this.state.matchedData.filter((row) => {return (row.approved)}).length}
                 />
 
             </div>

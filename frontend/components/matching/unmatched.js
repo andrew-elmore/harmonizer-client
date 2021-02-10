@@ -1,33 +1,22 @@
 import React, {useState}from 'react'
-import style from './../styles'
+import { unmatchedStyle} from './../styles'
+import UnmatchedElement from './unmatchedElement'
 
 
 const Unmatched = (props) => {
-    const [unmatchedItem, setUnmatchedItem] = useState(props.unmatchedItem)
-    if (unmatchedItem.length === 0){ return null}
 
-    const handleChange = (field) => {
-        return (e) => {
-            setUnmatchedItem({...unmatchedItem, [field]: e.currentTarget.value })
-        }
-    }
-
+    if (props.unmatchedData.length === 0){return null}
     return (
-        <div>
-            <input
-                value={unmatchedItem.distbId}
-                onChange={handleChange('distbId')}
-            />
-            <input
-                value={unmatchedItem.distb}
-                onChange={handleChange('distb')}
-            />
-            <span>{unmatchedItem.product}</span>
-            <button
-                onClick={() => {props.fetchMatches([unmatchedItem])}}
-            >Search</button>
+        <div style={unmatchedStyle.container}>
+            {props.unmatchedData.map((unmatchedItem) => {
+                return (
+                    <UnmatchedElement
+                        unmatchedItem={unmatchedItem}
+                        fetchMatches={(item) => { props.fetchMatches(item) }}
+                    />
+                )
+            })}
         </div>
-
     )
 }
 

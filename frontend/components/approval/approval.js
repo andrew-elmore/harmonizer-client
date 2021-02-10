@@ -5,6 +5,7 @@ import style from './../styles'
 const Approval = (props) => {
     const [fileName, setFileName] = useState('')
 
+    if (props.incompleteData > 0 || props.completeData === 0){return null}
     
     let today = new Date(Date.now())
     let year = today.getFullYear().toString().slice(2)
@@ -14,7 +15,6 @@ const Approval = (props) => {
     if (day.length === 1) { day = '0' + day }
     let date = `${year}${month}${day}`
 
-    if (props.incompleteData > 0 || props.completeData === 0){return null}
 
     const handleChange = () => {
         return (e) => {
@@ -34,7 +34,7 @@ const Approval = (props) => {
                 onClick={() => {
                     props.createCsv((fileName + ` ${date}`))
                 }}
-            >Approve</button>
+            >Approve All</button>
         </div>
     )
 }

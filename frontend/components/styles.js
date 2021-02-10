@@ -99,3 +99,29 @@ export const mappingStyle = {
             }
         }
     }
+
+
+export const unmatchedStyle = {
+    container: {
+        margin: 5,
+        marginTop: 10,
+        paddingTop: 5,
+        paddingBottom: 5,
+        backgroundColor: 'lightgrey'
+    },
+    searchButton: {
+        ...button,
+        backgroundColor: tLBlue,
+        color: 'white',
+        marginTop: 5,
+        width: '100%'
+    },
+    field: {
+        container: {
+            backgroundColor: 'white',
+            margin: 10,
+            padding: 5,
+            boxShadow: '1px 1px 5px grey',
+        },
+    }
+}
