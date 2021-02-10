@@ -5,6 +5,8 @@ import download from 'downloadjs'
 import Mapping from './mapping/mapping'
 import Matched from './matching/matched'
 import Unmatched from './matching/unmatched'
+import Approval from './approval/approval'
+import {uploadStyle} from './styles'
 
 class Main extends React.Component {
     constructor(props) {
@@ -12,26 +14,41 @@ class Main extends React.Component {
 
         this.state = {
             rawData: [
-                { "ID": '475517', "Supplier": 'UNFI', "name": 'Mind, Body and Soul' },
-                { "ID": '303537', "Supplier": 'UNFI', "name": 'Mind, Body and Soul' },
-                { "ID": '457481', "Supplier": 'UNFI', "name": 'Earl Grey Black Tea' },
-                { "ID": '684514', "Supplier": 'UNFI', "name": 'Fair Trade English Breakfast Tea' },
-                { "ID": '736488', "Supplier": 'UNFI', "name": 'Gunpowder Green Tea (Special Pin Head)' },
-                { "ID": '272310', "Supplier": 'UNFI', "name": 'Biodynamic' },
-                { "ID": '987420', "Supplier": 'UNFI', "name": 'Breakfast Blend' },
-                { "ID": '992883', "Supplier": 'UNFI', "name": 'Colombian' },
-                { "ID": '1628429', "Supplier": 'KEHE', "name": 'White Rice Flour' },
-                { "ID": '64834', "Supplier": 'KEHE', "name": 'Cornstarch' },
-                { "ID": '340257', "Supplier": 'KEHE', "name": 'Whole Wheat Flour' },
-                { "ID": '113858', "Supplier": 'KEHE', "name": 'Guatemalan Atitlan' },
-                { "ID": '331150', "Supplier": 'KEHE', "name": 'Brown Rice Flour' },
-                { "ID": '104381', "Supplier": 'KEHE', "name": 'Vital Wheat Gluten' },
+                // { "ID": '475517', "Supplier": 'UNFI', "name": 'Mind, Body and Soul' },
+                // { "ID": '303537', "Supplier": 'UNFI', "name": 'Mind, Body and Soul' },
+                // { "ID": '457481', "Supplier": 'UNFI', "name": 'Earl Grey Black Tea' },
+                // { "ID": '684514', "Supplier": 'UNFI', "name": 'Fair Trade English Breakfast Tea' },
+                // { "ID": '736488', "Supplier": 'UNFI', "name": 'Gunpowder Green Tea (Special Pin Head)' },
+                // { "ID": '272310', "Supplier": 'UNFI', "name": 'Biodynamic' },
+                // { "ID": '987420', "Supplier": 'UNFI', "name": 'Breakfast Blend' },
+                // { "ID": '992883', "Supplier": 'UNFI', "name": 'Colombian' },
+                // { "ID": '1628429', "Supplier": 'KEHE', "name": 'White Rice Flour' },
+                // { "ID": '64834', "Supplier": 'KEHE', "name": 'Cornstarch' },
+                // { "ID": '340257', "Supplier": 'KEHE', "name": 'Whole Wheat Flour' },
+                // { "ID": '113858', "Supplier": 'KEHE', "name": 'Guatemalan Atitlan' },
+                // { "ID": '331150', "Supplier": 'KEHE', "name": 'Brown Rice Flour' },
+                // { "ID": '10438', "Supplier": 'KEHE', "name": 'Vital Wheat Gluten' },
             ],
             mappedData: [
             ],
             matchedData: [
+                { tlId: "10025", distb: "UNFI", distbId: "475517", product: "Mind, Body and Soul", dbProductName: "Mind, Body and Soul"},
+                { tlId: "10025", distb: "UNFI", distbId: "303537", product: "Mind, Body and Soul", dbProductName: "Mind, Body and Soul"},
+                { tlId: "10087", distb: "UNFI", distbId: "457481", product: "Earl Grey Black Tea", dbProductName: "Earl Grey Black Tea"},
+                { tlId: "10088", distb: "UNFI", distbId: "684514", product: "Fair Trade English Breakfast Tea", dbProductName: "Fair Trade English Breakfast Tea"},
+                { tlId: "10134", distb: "UNFI", distbId: "736488", product: "Gunpowder Green Tea (Special Pin Head)", dbProductName: "Gunpowder Green Tea (Special Pin Head)"},
+                { tlId: "10174", distb: "UNFI", distbId: "272310", product: "Biodynamic", dbProductName: "Biodynamic"},
+                { tlId: "10176", distb: "UNFI", distbId: "987420", product: "Breakfast Blend", dbProductName: "Breakfast Blend"},
+                { tlId: "10177", distb: "UNFI", distbId: "992883", product: "Colombian", dbProductName: "Colombian"},
+                { tlId: "12685", distb: "KEHE", distbId: "1628429", product: "White Rice Flour", dbProductName: "White Rice Flour"},
+                { tlId: "11647", distb: "KEHE", distbId: "64834", product: "Cornstarch", dbProductName: "Cornstarch"},
+                { tlId: "12267", distb: "KEHE", distbId: "340257", product: "Whole Wheat Flour", dbProductName: "Whole Wheat Flour"},
+                { tlId: "10680", distb: "KEHE", distbId: "113858", product: "Guatemalan Atitlan", dbProductName: "Guatemalan Atitlan"},
+                { tlId: "12682", distb: "KEHE", distbId: "331150", product: "Brown Rice Flour", dbProductName: "Brown Rice Flour"},
             ],
             unmatchedData: [
+                { distb: "KEHE", distbId: "104381", product: "Vital Wheat Gluten"}
+
             ],
             fileName: ''
         };
@@ -44,9 +61,38 @@ class Main extends React.Component {
         this.submitMapping = this.submitMapping.bind(this);
         this.fetchMatches = this.fetchMatches.bind(this);
         this.createCsv = this.createCsv.bind(this)
+        this.approve = this.approve.bind(this)
+        this.reject = this.reject.bind(this)
     }
 
-    createCsv() {
+    approve(idx) {
+        let matchedData = this.state.matchedData
+        matchedData = matchedData.map((row, i) => {
+            if (idx === i) {
+                return {...row, approved: true}
+            } else {
+                return row
+            }
+        })
+        this.setState({ ['matchedData']: matchedData})
+    }
+
+    reject(idx) {
+        let matchedData = this.state.matchedData
+        let unmatchedData = this.state.unmatchedData
+        unmatchedData.push({
+            distb: matchedData[idx].distb,
+            distbId: matchedData[idx].distbId,
+            product: matchedData[idx].product,
+        })
+        matchedData = matchedData.filter((row, i) => { return i != idx})
+        this.setState({ 
+            ['matchedData']: matchedData, 
+            ['unmatchedData']: unmatchedData
+        })
+    }
+
+    createCsv(fileName) {
         const formData = new FormData();
         formData.append('matchedData', JSON.stringify(this.state.matchedData));
 
@@ -55,8 +101,13 @@ class Main extends React.Component {
             body: formData,
         })
         .then((response) => {
-            this.downloadFile(response)
+            this.downloadFile(response, fileName)
         });
+    }
+
+    downloadFile = async (res, fileName) => {
+        const blob = await res.blob();
+        download(blob, fileName);
     }
 
 
@@ -147,28 +198,28 @@ class Main extends React.Component {
         });
     }
 
-    downloadFile = async (res) => {
-        const blob = await res.blob();
-        download(blob, this.name);
-    }
+
 
     render() {
         return (
             <div>
-                <button onClick={() => { console.log(this.state) }}>See State</button>
-                <form onSubmit={this.handleUpload}>
-                    <div>
-                        <input ref={(ref) => { this.uploadInput = ref; }} type="file" />
-                    </div>
-                    <div>
-                        <button>Search</button>
+                {/* <button onClick={() => { console.log(this.state) }}>See State</button> */}
+                <form 
+                    onSubmit={this.handleUpload}>
+                    <div style={uploadStyle.container}>
+                        <input 
+                            style={{ ...uploadStyle.button, marginRight: 30 }}
+                            ref={(ref) => { this.uploadInput = ref; }} type="file" 
+                        />
+                        <button 
+                            style={{ ...uploadStyle.button}}
+                        >Search</button>
                     </div>
                 </form>
                 <Mapping
                     rawData={this.state.rawData}
                     submitMapping={(distbName, distbIdName, productName) => { this.submitMapping(distbName, distbIdName, productName)}}
                 />
-                <br/>
                 {this.state.unmatchedData.map((unmatchedItem) => {
                     return (
                         <Unmatched
@@ -177,18 +228,17 @@ class Main extends React.Component {
                         />
                     )
                 })}
-
-                <br />
-                <br />
-                <br />
+                <Approval
+                    createCsv={(fileName) => { this.createCsv(fileName) }}
+                    incompleteData={(this.state.unmatchedData.length + this.state.mappedData.length + this.state.rawData.length)}
+                    completeData={this.state.matchedData.length}
+                />
                 <Matched
                     matchedData={this.state.matchedData}
+                    approve={(idx) => { this.approve(idx)}}
+                    reject={(idx) => { this.reject(idx)}}
                 />
-                <button 
-                    onClick={() => {
-                        this.createCsv()
-                    }}
-                >Approve</button>
+
             </div>
         );
     }
