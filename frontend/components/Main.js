@@ -6,7 +6,7 @@ import Mapping from './mapping/mapping'
 import Matched from './matching/matched'
 import Unmatched from './matching/unmatched'
 import Approval from './approval/approval'
-import {uploadStyle, unmatchedStyle} from './styles'
+import {uploadStyle} from './styles'
 
 class Main extends React.Component {
     constructor(props) {
@@ -114,10 +114,13 @@ class Main extends React.Component {
     fetchMatches(sourceData) {
         const distbs = {}
         sourceData.forEach((row) => {
-            if (distbs[row["distb"]]) {
-                distbs[row["distb"]].push(row["distbId"])
-            } else {
-                distbs[row["distb"]] = [(row["distbId"])]
+            // console.log(row["distbId"], ': ', row["distbId"].length)
+            if (row["distbId"].length != 0){
+                if (distbs[row["distb"]]) {
+                    distbs[row["distb"]].push(row["distbId"])
+                } else {
+                    distbs[row["distb"]] = [(row["distbId"])]
+                }
             }
         })
         const formData = new FormData();
@@ -128,30 +131,45 @@ class Main extends React.Component {
             body: formData,
         })
         .then(response => response.json())
-        .then((matches) => {
-            
+        .then((matches) => {            
             const matchedData = this.state.matchedData
             let unmatchedData = this.state.unmatchedData
+            console.log(Object.keys(matches["KEHE"]).length)
 
             sourceData.forEach((row) => {
                 try{
                     let matchedItems = []
                     Object.entries(matches[row.distb]).forEach(([dbDistbId, dbItem])=>{
                         if (dbDistbId.includes(row.distbId)){
-                            matchedItems.push(dbItem)
+                            matchedItems.push({...dbItem, dbDistbId})
                         }
                     })
-                    console.log(matchedItems.length)
                     let matchedItem = null
                     if (matchedItems.length === 1) {
                         matchedItem = matchedItems[0]
+
+                        
                     } else {
-                        throw 'problem';
+                        let exactMatches = matchedItems.filter((item) => { return row.distbId === item.dbDistbId })
+                        if (exactMatches.length === 1){
+                            matchedItem = matchedItems[0]
+                        } else {
+                            throw 'not Found';
+                        }
                     }
-                    matchedData.push({ ...row, ['labelType']: matchedItem.labelType,["tlId"]: matchedItem.tlId, ["dbProductName"]: matchedItem.dbProductName })
+                    matchedData.push({
+                            ...row, 
+                            ['labelType']: matchedItem.labelType,
+                            ["tlId"]: matchedItem.tlId, 
+                            ["dbProductName"]: matchedItem.dbProductName,
+                            ["distbId"]: matchedItem.dbDistbId
+                        })
                     unmatchedData = unmatchedData.filter((item) => {return item.product != row.product})
-                } catch {
-                    unmatchedData.push(row)
+                } catch (err) {
+                    console.log(err)
+                    if (unmatchedData.filter((item) => { return( item.product === row.product ) }).length === 0){
+                        unmatchedData.push(row)
+                    }
                 }
             });
 
@@ -166,13 +184,14 @@ class Main extends React.Component {
 
     submitMapping(distbName, distbIdName, productName) {
         const rawData = this.state.rawData
-        const mappedData = rawData.map((row) => {
+        let mappedData = rawData.map((row) => {
             return {
                 distb: row[distbName],
                 distbId: row[distbIdName],
                 product: row[productName]
             }
-        })
+        });
+        mappedData = mappedData.filter((row) => { return (row['distbId'].length != 0)})
         this.setState({
             ["rawData"]: [],
             ["mappedData"]: mappedData
@@ -193,7 +212,7 @@ class Main extends React.Component {
             body: data,
         }).then(response => response.json())
         .then((data) => {
-            console.log(data)
+            // console.log(data)
             this.setState({ ['rawData']: data })
         });
     }
@@ -203,7 +222,7 @@ class Main extends React.Component {
     render() {
         return (
             <div>
-                {/* <button onClick={() => { console.log(this.state) }}>See State</button> */}
+                <button onClick={() => { console.log(this.state) }}>See State</button>
                 <form 
                     onSubmit={this.handleUpload}>
                     <div style={uploadStyle.container}>

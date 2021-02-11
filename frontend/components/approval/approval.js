@@ -5,7 +5,6 @@ import {approvalStyle} from './../styles'
 const Approval = (props) => {
     const [fileName, setFileName] = useState('')
 
-    console.log(props.incompleteData)
     if (props.incompleteData > 0 || props.completeData === 0){return null}
     
     let today = new Date(Date.now())

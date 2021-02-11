@@ -25,6 +25,8 @@ export const mappingStyle = {
         container: {
             margin: 10,
             // border: '1px solid black'
+            boxShadow: '1px 1px 5px grey',
+            padding: 10
         },
         line: {
             container: {
