@@ -134,7 +134,6 @@ class Main extends React.Component {
         .then((matches) => {            
             const matchedData = this.state.matchedData
             let unmatchedData = this.state.unmatchedData
-            console.log(Object.keys(matches["KEHE"]).length)
 
             sourceData.forEach((row) => {
                 try{
@@ -185,9 +184,12 @@ class Main extends React.Component {
     submitMapping(distbName, distbIdName, productName) {
         const rawData = this.state.rawData
         let mappedData = rawData.map((row) => {
+            let nums = '1234567890'
+            let distbId = row[distbIdName].split('').filter((char) => { return nums.includes(char)}).join('')
+            console.log(distbId)
             return {
                 distb: row[distbName],
-                distbId: row[distbIdName],
+                distbId: distbId,
                 product: row[productName]
             }
         });
