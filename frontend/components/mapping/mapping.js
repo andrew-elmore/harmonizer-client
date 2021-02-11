@@ -6,12 +6,12 @@ const Mapping = (props) => {
 
     
 
-    const [distb, setDistib] = useState('Supplier')
-    const [distbId, setDistibId] = useState('ID')
-    const [product, setProduct] = useState('name')
-    // const [distbId, setDistibId] = useState('')
-    // const [distb, setDistib] = useState('')
-    // const [product, setProduct] = useState('')
+    // const [distb, setDistib] = useState('Supplier')
+    // const [distbId, setDistibId] = useState('ID')
+    // const [product, setProduct] = useState('name')
+    const [distbId, setDistibId] = useState('')
+    const [distb, setDistib] = useState('')
+    const [product, setProduct] = useState('')
 
 
     

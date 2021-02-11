@@ -125,3 +125,19 @@ export const unmatchedStyle = {
         },
     }
 }
+
+export const approvalStyle = {
+    container: {
+        margin: 10,
+        padding: 10,
+        boxShadow: '1px 1px 5px grey',
+    },
+    button:{
+        ...button,
+        backgroundColor: tLGreen,
+        color: 'white',
+        marginTop: 5,
+        width: '100%'
+    }
+
+}

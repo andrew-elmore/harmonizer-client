@@ -1,10 +1,11 @@
 import React, {useState} from 'react'
-import style from './../styles'
+import {approvalStyle} from './../styles'
 
 
 const Approval = (props) => {
     const [fileName, setFileName] = useState('')
 
+    console.log(props.incompleteData)
     if (props.incompleteData > 0 || props.completeData === 0){return null}
     
     let today = new Date(Date.now())
@@ -23,14 +24,16 @@ const Approval = (props) => {
     }
 
     return (
-        <div>
+        <div style={approvalStyle.container}>
             <input
                 placeholder={'filename'}
                 value={fileName}
                 onChange={handleChange()}
             />
-            <span>{date}</span>
+            <span>    {date}.csv</span>
+            <br/>
             <button
+                style={approvalStyle.button}
                 onClick={() => {
                     props.createCsv((fileName + ` ${date}`))
                 }}
