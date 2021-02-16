@@ -87,14 +87,14 @@ export const mappingStyle = {
             originalData: {
                 container: {
                     backgroundColor: 'white',
-                    width: '50%',
+                    width: '25%',
                     padding: 5
                 }
             },
             dbData: {
                 container: {
                     backgroundColor: 'white',
-                    width: '50%',
+                    width: '75%',
                     padding: 5
 
                 } 
@@ -124,7 +124,22 @@ export const unmatchedStyle = {
             margin: 10,
             padding: 5,
             boxShadow: '1px 1px 5px grey',
+            display: 'flex',
         },
+    },
+    originalData: {
+        container: {
+            backgroundColor: 'white',
+            width: '25%',
+            padding: 5
+        }
+    },
+    dbData: {
+        container: {
+            backgroundColor: 'white',
+            width: '75%',
+            padding: 5,
+        } 
     }
 }
 

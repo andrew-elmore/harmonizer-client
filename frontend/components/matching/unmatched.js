@@ -11,6 +11,7 @@ const Unmatched = (props) => {
             {props.unmatchedData.map((unmatchedItem) => {
                 return (
                     <UnmatchedElement
+                        key={unmatchedItem.distbId}
                         unmatchedItem={unmatchedItem}
                         fetchMatches={(item) => { props.fetchMatches(item) }}
                     />

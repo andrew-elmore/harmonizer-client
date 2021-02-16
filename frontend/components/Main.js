@@ -14,20 +14,20 @@ class Main extends React.Component {
 
         this.state = {
             rawData: [
-                // { "ID": '475517', "Supplier": 'UNFI', "name": 'Mind, Body and Soul' },
-                // { "ID": '303537', "Supplier": 'UNFI', "name": 'Mind, Body and Soul' },
-                // { "ID": '457481', "Supplier": 'UNFI', "name": 'Earl Grey Black Tea' },
-                // { "ID": '684514', "Supplier": 'UNFI', "name": 'Fair Trade English Breakfast Tea' },
-                // { "ID": '736488', "Supplier": 'UNFI', "name": 'Gunpowder Green Tea (Special Pin Head)' },
-                // { "ID": '272310', "Supplier": 'UNFI', "name": 'Biodynamic' },
-                // { "ID": '987420', "Supplier": 'UNFI', "name": 'Breakfast Blend' },
-                // { "ID": '992883', "Supplier": 'UNFI', "name": 'Colombian' },
-                // { "ID": '1628429', "Supplier": 'KEHE', "name": 'White Rice Flour' },
-                // { "ID": '64834', "Supplier": 'KEHE', "name": 'Cornstarch' },
-                // { "ID": '340257', "Supplier": 'KEHE', "name": 'Whole Wheat Flour' },
-                // { "ID": '113858', "Supplier": 'KEHE', "name": 'Guatemalan Atitlan' },
-                // { "ID": '331150', "Supplier": 'KEHE', "name": 'Brown Rice Flour' },
-                // { "ID": '10438', "Supplier": 'KEHE', "name": 'Vital Wheat Gluten' },
+                { "ID": '475517', "Supplier": 'UNFI', "name": 'Mind, Body and Soul' },
+                { "ID": '303537', "Supplier": 'UNFI', "name": 'Mind, Body and Soul' },
+                { "ID": '457481', "Supplier": 'UNFI', "name": 'Earl Grey Black Tea' },
+                { "ID": '684514', "Supplier": 'UNFI', "name": 'Fair Trade English Breakfast Tea' },
+                { "ID": '736488', "Supplier": 'UNFI', "name": 'Gunpowder Green Tea (Special Pin Head)' },
+                { "ID": '0272310', "Supplier": 'UNFI', "name": 'Biodynamic' },
+                { "ID": '987420', "Supplier": 'UNFI', "name": 'Breakfast Blend' },
+                { "ID": '992883', "Supplier": 'UNFI', "name": 'Colombian' },
+                { "ID": '1628429', "Supplier": 'KEHE', "name": 'White Rice Flour' },
+                { "ID": '64834', "Supplier": 'KEHE', "name": 'Cornstarch' },
+                { "ID": '340257', "Supplier": 'KEHE', "name": 'Whole Wheat Flour' },
+                { "ID": '113858', "Supplier": 'KEHE', "name": 'Guatemalan Atitlan' },
+                { "ID": '331150', "Supplier": 'KEHE', "name": 'Brown Rice Flour' },
+                { "ID": '10438', "Supplier": 'KEHE', "name": 'Vital Wheat Gluten' },
             ],
             mappedData: [
             ],
@@ -153,10 +153,14 @@ class Main extends React.Component {
                         if (exactMatches.length === 1){
                             matchedItem = matchedItems[0]
                         } else {
+                            console.log(matchedItems)
+                            if (unmatchedData.filter((item) => { return (item.product === row.product) }).length === 0) {
+                                unmatchedData.push({ ...row, potentialMatches: matchedItems })
+                            }
                             throw 'not Found';
                         }
                     }
-                    matchedData.push({
+                    matchedData.unshift({
                             ...row, 
                             ['labelType']: matchedItem.labelType,
                             ["tlId"]: matchedItem.tlId, 
@@ -166,9 +170,10 @@ class Main extends React.Component {
                     unmatchedData = unmatchedData.filter((item) => {return item.product != row.product})
                 } catch (err) {
                     console.log(err)
-                    if (unmatchedData.filter((item) => { return( item.product === row.product ) }).length === 0){
-                        unmatchedData.push(row)
-                    }
+                    // console.log(matchedItems)
+                    // if (unmatchedData.filter((item) => { return( item.product === row.product ) }).length === 0){
+                    //     unmatchedData.push(row)
+                    // }
                 }
             });
 
@@ -224,7 +229,7 @@ class Main extends React.Component {
     render() {
         return (
             <div>
-                <button onClick={() => { console.log(this.state) }}>See State</button>
+                {/* <button onClick={() => { console.log(this.state) }}>See State</button> */}
                 <form 
                     onSubmit={this.handleUpload}>
                     <div style={uploadStyle.container}>

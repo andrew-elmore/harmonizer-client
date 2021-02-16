@@ -6,12 +6,12 @@ const Mapping = (props) => {
 
     
 
-    const [distb, setDistib] = useState('Supplier')
-    const [distbId, setDistibId] = useState('ID')
-    const [product, setProduct] = useState('name')
-    // const [distbId, setDistibId] = useState('')
-    // const [distb, setDistib] = useState('')
-    // const [product, setProduct] = useState('')
+    // const [distb, setDistib] = useState('Supplier')
+    // const [distbId, setDistibId] = useState('ID')
+    // const [product, setProduct] = useState('name')
+    const [distbId, setDistibId] = useState('')
+    const [distb, setDistib] = useState('')
+    const [product, setProduct] = useState('')
 
 
     
@@ -32,13 +32,14 @@ const Mapping = (props) => {
         <div style={mappingStyle.container}>
                 {conversionFields.map(([title, setField, stateField]) => {
                         return (
-                            <div style={mappingStyle.line.container}>
+                            <div style={mappingStyle.line.container} key={title}>
                                 <div style={mappingStyle.line.title}>{title}: </div>
                                 {sourceFields.map((sourceField) => {
 
                                     let buttonType = mappingStyle.line.unselectedButton
                                     if (sourceField === stateField) { buttonType = mappingStyle.line.selectedButton }
                                     return (<button
+                                        key={sourceField}
                                         style={{ ...buttonType }}
                                         onClick={() => { setField(sourceField) }}
                                     >{sourceField}</button>)

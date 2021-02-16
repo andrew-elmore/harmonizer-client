@@ -14,7 +14,7 @@ const Matched = (props) => {
 
                 
             return (
-                <div style={{...matchedStyle.data.container}}>
+                <div style={{...matchedStyle.data.container}} key={idx}>
                     <div>
                     </div>
                     <div style={matchedStyle.data.originalData.container}>
